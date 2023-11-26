@@ -1,11 +1,15 @@
 #include <array>
 #include <cmath>
 #include <SFML/Graphics.hpp>
-
+#include <thread>
 #include "Headers/Global.hpp"
 #include "Headers/Pacman.hpp"
 #include "Headers/Ghost.hpp"
 #include "Headers/GhostManager.hpp"
+
+void setPosition(int i){
+    printf("inside set position! by thread %d\n",i);
+}
 
 GhostManager::GhostManager() :
 	current_wave(0),
@@ -29,6 +33,23 @@ void GhostManager::reset(unsigned char i_level, const std::array<Position, 4>& i
 
 	//This is how we're increasing the difficulty.
 	wave_timer = static_cast<unsigned short>(LONG_SCATTER_DURATION / pow(2, i_level));
+
+
+/*
+    vector<thread> threads_vec;
+    for (int i = 0; i < threads; i++){
+        threads_vec.push_back(thread(compute,data,range));
+    }
+    for(int i = 0; i < threads; i++) {
+        threads_vec[i].join();
+    }*/
+    std::thread myThreads[4];
+    for (int i = 0; i < 4; i++){
+        myThreads[i] = std::thread(setPosition,i);
+    }
+    for(int i = 0; i < 4; i++) {
+        myThreads[i].join();
+    }
 
 	for (unsigned char a = 0; a < 4; a++)
 	{
