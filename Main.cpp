@@ -35,9 +35,9 @@ int main()
 "     #.##.#.#####.#.##.#  #.##.#.#####.#.##.# #.##.#.#####.#.##.#  #.##.#.#####.#.##.# ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     ####.### # ###.####  ####.### # ###.#### ####.### # ###.####  ####.### # ###.#### ,,,,",
-"        #.#   0   #.#        #.#   0   #.#       #.#   0   #.#        #.#   0   #.#    ,,,,",
+"        #.#   0   #.#        #.#   0   #.#       #.#   8   #.#        #.#   4   #.#    ,,,,",
 "#########.# ##=## #.##########.# ##=## #.#########.# ##=## #.##########.# ##=## #.#########",
-"         .  #8,8,9#  .          .  #1,2,3#  .         .  #1,2,3#  .          .  #1,2,3#  .     ",
+"         .  #5,6,7#  .          .  #1,2,3#  .         .  #9,10,11#  .          .  #5,6,7#  .     ",
 "#########.# ##### #.##########.# ##### #.#########.# ##### #.##########.# ##### #.#########",
 "        #.#       #.#        #.#       #.#       #.#       #.#        #.#       #.#    ,,,,",
 "     ####.# ##### #.####  ####.# ##### #.#### ####.# ##### #.####  ####.# ##### #.#### ,,,,",
@@ -56,9 +56,9 @@ int main()
 "     #.##.#.#####.#.##.#  #.##.#.#####.#.##.# #.##.#.#####.#.##.#  #.##.#.#####.#.##.# ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     ####.### # ###.####  ####.### # ###.#### ####.### # ###.####  ####.### # ###.#### ,,,,",
-"        #.#   4   #.#        #.#   0   #.#       #.#   0   #.#        #.#   0   #.#    ,,,,",
+"        #.#   4   #.#        #.#   8   #.#       #.#   4   #.#        #.#   0   #.#    ,,,,",
 "#########.# ##=## #.##########.# ##=## #.#########.# ##=## #.##########.# ##=## #.#########",
-"         .  #5,6,7#  .          .  #1,2,3#  .         .  #1,2,3#  .          .  #1,2,3#  .     ",
+"         .  #5,6,7#  .          .  #1,2,3#  .         .  #5,6,7#  .          .  #1,2,3#  .     ",
 "#########.# ##### #.##########.# ##### #.#########.# ##### #.##########.# ##### #.#########",
 "        #.#       #.#        #.#       #.#       #.#       #.#        #.#       #.#    ,,,,",
 "     ####.# ##### #.####  ####.# ##### #.#### ####.# ##### #.####  ####.# ##### #.#### ,,,,",
@@ -84,11 +84,11 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(CELL_SIZE * MAP_WIDTH * SCREEN_RESIZE, (FONT_HEIGHT + CELL_SIZE * MAP_HEIGHT) * SCREEN_RESIZE), "Pac-Man", sf::Style::Close | sf::Style::Resize);
 	//Resizing the window.
 	window.setView(sf::View(sf::FloatRect(0, 0, CELL_SIZE * MAP_WIDTH, FONT_HEIGHT + CELL_SIZE * MAP_HEIGHT)));
-	window.setPosition(sf::Vector2i(100, 100));
+
 	GhostManager ghost_manager;
 
 	//Pacman pacman;
-    std::array<Pacman, pacnum> pacman;
+	std::array<Pacman, pacnum> pacman;
 
 	//Generating a random seed.
 	srand(static_cast<unsigned>(time(0)));
@@ -104,7 +104,7 @@ int main()
 	{
 		//Here we're calculating the lag.
 		unsigned delta_time = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previous_time).count();
-        //std::cout<<delta_time<<"\n";
+		//std::cout<<delta_time<<"\n";
 		lag += delta_time;
 
 		previous_time += std::chrono::microseconds(delta_time);
@@ -126,15 +126,17 @@ int main()
 					}
 				}
 			}
-            //if game is not won and pacman 0 isn't dead
+			//if game is not won and pacman 0 isn't dead
 			if (0 == game_won && 0 == pacman[0].get_dead())
 			{
 				game_won = 1;
-                for (int i=0;i<pacnum;i++) {
-                    pacman[i].update(level, map);
-                    //printf("pac %d updated!\n",i);
-                }
+
+				for (int i = 0; i < pacnum; i++) {
+					pacman[i].update(level, map);
+					//printf("pac %d updated!\n",i);
+				}
 				ghost_manager.update(level, map, pacman[0]);
+
 
 				//We're checking every cell in the map.
 				for (const std::array<Cell, MAP_HEIGHT>& column : map)
@@ -160,7 +162,7 @@ int main()
 					pacman[0].set_animation_timer(0);
 				}
 			}
-            //if game is won or lost, and enter is presses
+			//if game is won or lost, and enter is presses
 			else if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) //Restarting the game.
 			{
 				game_won = 0;
@@ -178,9 +180,9 @@ int main()
 				map = convert_sketch(map_sketch, ghost_positions, pacman);
 
 				ghost_manager.reset(level, ghost_positions);
-                for (int i=0;i<pacnum;i++) {
-				    pacman[i].reset();
-                }
+				for (int i = 0; i < pacnum; i++) {
+					pacman[i].reset();
+				}
 			}
 
 			//I don't think anything needs to be explained here.
@@ -196,9 +198,10 @@ int main()
 
 					draw_text(0, 0, CELL_SIZE * MAP_HEIGHT, "Level: " + std::to_string(1 + level), window);
 				}
-                for (int i=0;i<pacnum;i++) {
-                    pacman[i].draw(game_won, window);
-                }
+
+				for (int i = 0; i < pacnum; i++) {
+					pacman[i].draw(game_won, window);
+				}
 				if (1 == pacman[0].get_animation_over())
 				{
 					if (1 == game_won)
