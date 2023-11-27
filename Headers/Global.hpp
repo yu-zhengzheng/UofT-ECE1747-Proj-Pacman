@@ -1,5 +1,6 @@
 #pragma once
 constexpr unsigned char ghostnum = 8;
+constexpr unsigned char pacnum = 1000;
 //I won't explain this.
 constexpr unsigned char CELL_SIZE = 16;
 //This too.
@@ -35,7 +36,7 @@ constexpr unsigned char SCREEN_RESIZE = 2;
 //This is in frames. So don't be surprised if the numbers are too big.
 constexpr unsigned short CHASE_DURATION = 1024;
 constexpr unsigned short ENERGIZER_DURATION = 512;
-constexpr unsigned short FRAME_DURATION = 16667;
+constexpr unsigned short FRAME_DURATION = 6667;
 constexpr unsigned short GHOST_FLASH_START = 64;
 constexpr unsigned short LONG_SCATTER_DURATION = 512;
 constexpr unsigned short SHORT_SCATTER_DURATION = 256;
