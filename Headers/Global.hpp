@@ -1,9 +1,9 @@
 #pragma once
-
+constexpr unsigned char ghostnum = 8;
 //I won't explain this.
 constexpr unsigned char CELL_SIZE = 16;
 //This too.
-constexpr unsigned char FONT_HEIGHT = 16;
+constexpr unsigned char FONT_HEIGHT = 8;
 //Okay, I'll explain this.
 //I start counting everything from 0, so this is actually the second ghost.
 //The website used smaller cells, so I'm setting smaller values.
@@ -24,12 +24,12 @@ constexpr unsigned char GHOST_ESCAPE_SPEED = 4;
 constexpr unsigned char GHOST_FRIGHTENED_SPEED = 3;
 //I won't explain the rest. Bite me!
 constexpr unsigned char GHOST_SPEED = 1;
-constexpr unsigned char MAP_HEIGHT = 21;
-constexpr unsigned char MAP_WIDTH = 21;
+constexpr unsigned char MAP_HEIGHT = 42;
+constexpr unsigned char MAP_WIDTH = 90;//ONLY the effective blocks
 constexpr unsigned char PACMAN_ANIMATION_FRAMES = 6;
 constexpr unsigned char PACMAN_ANIMATION_SPEED = 4;
 constexpr unsigned char PACMAN_DEATH_FRAMES = 12;
-constexpr unsigned char PACMAN_SPEED = 1;
+constexpr unsigned char PACMAN_SPEED = 2;
 constexpr unsigned char SCREEN_RESIZE = 2;
 
 //This is in frames. So don't be surprised if the numbers are too big.
