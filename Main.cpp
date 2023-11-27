@@ -2,6 +2,7 @@
 #include <chrono>
 #include <ctime>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 #include "Headers/Global.hpp"
 #include "Headers/DrawText.hpp"
@@ -34,9 +35,9 @@ int main()
 "     #.##.#.#####.#.##.#  #.##.#.#####.#.##.# #.##.#.#####.#.##.#  #.##.#.#####.#.##.# ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     ####.### # ###.####  ####.### # ###.#### ####.### # ###.####  ####.### # ###.#### ,,,,",
-"        #.#   0   #.#        #.#   0   #.#       #.#   0   #.#        #.#   0   #.#    ,,,,",
+"        #.#   0   #.#        #.#   0   #.#       #.#   4   #.#        #.#   4   #.#    ,,,,",
 "#########.# ##=## #.##########.# ##=## #.#########.# ##=## #.##########.# ##=## #.#########",
-"         .  #8,8,9#  .          .  #1,2,3#  .         .  #1,2,3#  .          .  #1,2,3#  .     ",
+"         .  #5,6,7#  .          .  #1,2,3#  .         .  #1,2,3#  .          .  #5,6,7#  .     ",
 "#########.# ##### #.##########.# ##### #.#########.# ##### #.##########.# ##### #.#########",
 "        #.#       #.#        #.#       #.#       #.#       #.#        #.#       #.#    ,,,,",
 "     ####.# ##### #.####  ####.# ##### #.#### ####.# ##### #.####  ####.# ##### #.#### ,,,,",
@@ -46,8 +47,8 @@ int main()
 "     ##.#.#.#####.#.#.##  ##.#.#.#####.#.#.## ##.#.#.#####.#.#.##  ##.#.#.#####.#.#.## ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     #.######.#.######.####.######.#.######.###.######.#.######.####.######.#.######.# ,,,,",
-"     #.................    .................   .................    .................# ,,,,",
-"     #.####.......####.####.####.......####.###.####.......####.####.####.......####.# ,,,,",
+"     #......#...#......    ......#...#......   ......#...#......    ......#...#......# ,,,,",
+"     #.####...#...####.####.####...#...####.###.####...#...####.####.####...#...####.# ,,,,",
 "     #....#########....#  #....#########....# #....#########....#  #....#########....# ,,,,",
 "     #.#......#......#.#  #.#......#......#.# #.#......#......#.#  #.#......#......#.# ,,,,",
 "     #o##.###.#.###.##o#  #o##.###.#.###.##o# #o##.###.#.###.##o#  #o##.###.#.###.##o# ,,,,",
@@ -55,9 +56,9 @@ int main()
 "     #.##.#.#####.#.##.#  #.##.#.#####.#.##.# #.##.#.#####.#.##.#  #.##.#.#####.#.##.# ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     ####.### # ###.####  ####.### # ###.#### ####.### # ###.####  ####.### # ###.#### ,,,,",
-"        #.#   4   #.#        #.#   0   #.#       #.#   0   #.#        #.#   0   #.#    ,,,,",
+"        #.#   4   #.#        #.#   8   #.#       #.#   4   #.#        #.#   0   #.#    ,,,,",
 "#########.# ##=## #.##########.# ##=## #.#########.# ##=## #.##########.# ##=## #.#########",
-"         .  #5,6,7#  .          .  #1,2,3#  .         .  #1,2,3#  .          .  #1,2,3#  .     ",
+"         .  #5,6,7#  .          .  #1,2,3#  .         .  #5,6,7#  .          .  #1,2,3#  .     ",
 "#########.# ##### #.##########.# ##### #.#########.# ##### #.##########.# ##### #.#########",
 "        #.#       #.#        #.#       #.#       #.#       #.#        #.#       #.#    ,,,,",
 "     ####.# ##### #.####  ####.# ##### #.#### ####.# ##### #.####  ####.# ##### #.#### ,,,,",
@@ -83,10 +84,11 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(CELL_SIZE * MAP_WIDTH * SCREEN_RESIZE, (FONT_HEIGHT + CELL_SIZE * MAP_HEIGHT) * SCREEN_RESIZE), "Pac-Man", sf::Style::Close | sf::Style::Resize);
 	//Resizing the window.
 	window.setView(sf::View(sf::FloatRect(0, 0, CELL_SIZE * MAP_WIDTH, FONT_HEIGHT + CELL_SIZE * MAP_HEIGHT)));
-	window.setPosition(sf::Vector2i(100, 100));
+
 	GhostManager ghost_manager;
 
-	Pacman pacman;
+	//Pacman pacman;
+	std::array<Pacman, pacnum> pacman;
 
 	//Generating a random seed.
 	srand(static_cast<unsigned>(time(0)));
@@ -102,7 +104,7 @@ int main()
 	{
 		//Here we're calculating the lag.
 		unsigned delta_time = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previous_time).count();
-
+		//std::cout<<delta_time<<"\n";
 		lag += delta_time;
 
 		previous_time += std::chrono::microseconds(delta_time);
@@ -124,14 +126,37 @@ int main()
 					}
 				}
 			}
+			//if game is not won and there are pacmen still alive
+			bool allPacmanDead = true;
+			int alivepacs = 0;
+			int last = 0;
+			for (int i = 0; i < pacnum; i++) {
+				if (pacman[i].get_dead() == 0) {
+					allPacmanDead = false;
+					alivepacs++;
+					last = i;
+					break;
+				}
+			}
 
-			if (0 == game_won && 0 == pacman.get_dead())
+			if (0 == game_won && !allPacmanDead)
 			{
 				game_won = 1;
 
-				pacman.update(level, map);
+				for (int i = 0; i < pacnum; i++) {
+					if (pacman[i].get_dead() == 0)
+					{
+						pacman[i].update(level, map);
+						//printf("pac %d updated!\n",i);
+					}
+					
+				}
+				for (int i = 0; i < pacnum; i++) {
+					if (!allPacmanDead) {
+						ghost_manager.update(level, map, pacman[i]);
+					}
+				}
 
-				ghost_manager.update(level, map, pacman);
 
 				//We're checking every cell in the map.
 				for (const std::array<Cell, MAP_HEIGHT>& column : map)
@@ -154,14 +179,20 @@ int main()
 
 				if (1 == game_won)
 				{
-					pacman.set_animation_timer(0);
+					//for (int i = 0; i < pacnum; i++) {
+						
+						pacman[last].set_animation_timer(0);
+						
+					//}
+					
 				}
 			}
+			//if game is won or lost, and enter is presses
 			else if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) //Restarting the game.
 			{
 				game_won = 0;
 
-				if (1 == pacman.get_dead())
+				if (1 == allPacmanDead)
 				{
 					level = 0;
 				}
@@ -174,8 +205,9 @@ int main()
 				map = convert_sketch(map_sketch, ghost_positions, pacman);
 
 				ghost_manager.reset(level, ghost_positions);
-
-				pacman.reset();
+				for (int i = 0; i < pacnum; i++) {
+					pacman[i].reset();
+				}
 			}
 
 			//I don't think anything needs to be explained here.
@@ -183,18 +215,37 @@ int main()
 			{
 				window.clear();
 
-				if (0 == game_won && 0 == pacman.get_dead())
+				if (0 == game_won && !allPacmanDead)
 				{
 					draw_map(map, window);
+					int maxenergizer = 0;
+					for (int i = 0; i < pacnum; i++) {
+						if(pacman[i].get_energizer_timer()>maxenergizer)
+						{
+							maxenergizer = pacman[i].get_energizer_timer();
+						};
 
-					ghost_manager.draw(GHOST_FLASH_START >= pacman.get_energizer_timer(), window);
+					}
+					ghost_manager.draw(GHOST_FLASH_START >= maxenergizer, window);
 
 					draw_text(0, 0, CELL_SIZE * MAP_HEIGHT, "Level: " + std::to_string(1 + level), window);
 				}
 
-				pacman.draw(game_won, window);
-
-				if (1 == pacman.get_animation_over())
+				for (int i = 0; i < pacnum; i++) {
+					if (pacman[i].get_dead() == 0)
+					{
+						pacman[i].draw(game_won, window);
+					}
+					
+				}
+				bool allanimover = true;
+				for (int i = 0; i < pacnum; i++) {
+					if (!pacman[i].get_animation_over())
+					{
+						allanimover = false;
+					}
+				}
+				if ((!allanimover && allPacmanDead) || game_won)
 				{
 					if (1 == game_won)
 					{
