@@ -1,5 +1,5 @@
 #pragma once
-constexpr unsigned char ghostnum = 8;
+constexpr unsigned char ghostnum = 32;
 //I won't explain this.
 constexpr unsigned char CELL_SIZE = 16;
 //This too.
