@@ -35,9 +35,9 @@ int main()
 "     #.##.#.#####.#.##.#  #.##.#.#####.#.##.# #.##.#.#####.#.##.#  #.##.#.#####.#.##.# ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     ####.### # ###.####  ####.### # ###.#### ####.### # ###.####  ####.### # ###.#### ,,,,",
-"        #.#   0   #.#        #.#   0   #.#       #.#   8   #.#        #.#   4   #.#    ,,,,",
+"        #.#   0   #.#        #.#   0   #.#       #.#   4   #.#        #.#   4   #.#    ,,,,",
 "#########.# ##=## #.##########.# ##=## #.#########.# ##=## #.##########.# ##=## #.#########",
-"         .  #5,6,7#  .          .  #1,2,3#  .         .  #9,10,11#  .          .  #5,6,7#  .     ",
+"         .  #5,6,7#  .          .  #1,2,3#  .         .  #1,2,3#  .          .  #5,6,7#  .     ",
 "#########.# ##### #.##########.# ##### #.#########.# ##### #.##########.# ##### #.#########",
 "        #.#       #.#        #.#       #.#       #.#       #.#        #.#       #.#    ,,,,",
 "     ####.# ##### #.####  ####.# ##### #.#### ####.# ##### #.####  ####.# ##### #.#### ,,,,",
@@ -47,8 +47,8 @@ int main()
 "     ##.#.#.#####.#.#.##  ##.#.#.#####.#.#.## ##.#.#.#####.#.#.##  ##.#.#.#####.#.#.## ,,,,",
 "     #....#...#...#....#  #....#...#...#....# #....#...#...#....#  #....#...#...#....# ,,,,",
 "     #.######.#.######.####.######.#.######.###.######.#.######.####.######.#.######.# ,,,,",
-"     #.................    .................   .................    .................# ,,,,",
-"     #.####.......####.####.####.......####.###.####.......####.####.####.......####.# ,,,,",
+"     #......#...#......    ......#...#......   ......#...#......    ......#...#......# ,,,,",
+"     #.####...#...####.####.####...#...####.###.####...#...####.####.####...#...####.# ,,,,",
 "     #....#########....#  #....#########....# #....#########....#  #....#########....# ,,,,",
 "     #.#......#......#.#  #.#......#......#.# #.#......#......#.#  #.#......#......#.# ,,,,",
 "     #o##.###.#.###.##o#  #o##.###.#.###.##o# #o##.###.#.###.##o#  #o##.###.#.###.##o# ,,,,",
@@ -126,16 +126,36 @@ int main()
 					}
 				}
 			}
-			//if game is not won and pacman 0 isn't dead
-			if (0 == game_won && 0 == pacman[0].get_dead())
+			//if game is not won and there are pacmen still alive
+			bool allPacmanDead = true;
+			int alivepacs = 0;
+			int last = 0;
+			for (int i = 0; i < pacnum; i++) {
+				if (pacman[i].get_dead() == 0) {
+					allPacmanDead = false;
+					alivepacs++;
+					last = i;
+					break;
+				}
+			}
+
+			if (0 == game_won && !allPacmanDead)
 			{
 				game_won = 1;
 
 				for (int i = 0; i < pacnum; i++) {
-					pacman[i].update(level, map);
-					//printf("pac %d updated!\n",i);
+					if (pacman[i].get_dead() == 0)
+					{
+						pacman[i].update(level, map);
+						//printf("pac %d updated!\n",i);
+					}
+					
 				}
-				ghost_manager.update(level, map, pacman[0]);
+				for (int i = 0; i < pacnum; i++) {
+					if (!allPacmanDead) {
+						ghost_manager.update(level, map, pacman[i]);
+					}
+				}
 
 
 				//We're checking every cell in the map.
@@ -159,7 +179,12 @@ int main()
 
 				if (1 == game_won)
 				{
-					pacman[0].set_animation_timer(0);
+					//for (int i = 0; i < pacnum; i++) {
+						
+						pacman[last].set_animation_timer(0);
+						
+					//}
+					
 				}
 			}
 			//if game is won or lost, and enter is presses
@@ -167,7 +192,7 @@ int main()
 			{
 				game_won = 0;
 
-				if (1 == pacman[0].get_dead())
+				if (1 == allPacmanDead)
 				{
 					level = 0;
 				}
@@ -190,19 +215,37 @@ int main()
 			{
 				window.clear();
 
-				if (0 == game_won && 0 == pacman[0].get_dead())
+				if (0 == game_won && !allPacmanDead)
 				{
 					draw_map(map, window);
+					int maxenergizer = 0;
+					for (int i = 0; i < pacnum; i++) {
+						if(pacman[i].get_energizer_timer()>maxenergizer)
+						{
+							maxenergizer = pacman[i].get_energizer_timer();
+						};
 
-					ghost_manager.draw(GHOST_FLASH_START >= pacman[0].get_energizer_timer(), window);
+					}
+					ghost_manager.draw(GHOST_FLASH_START >= maxenergizer, window);
 
 					draw_text(0, 0, CELL_SIZE * MAP_HEIGHT, "Level: " + std::to_string(1 + level), window);
 				}
 
 				for (int i = 0; i < pacnum; i++) {
-					pacman[i].draw(game_won, window);
+					if (pacman[i].get_dead() == 0)
+					{
+						pacman[i].draw(game_won, window);
+					}
+					
 				}
-				if (1 == pacman[0].get_animation_over())
+				bool allanimover = true;
+				for (int i = 0; i < pacnum; i++) {
+					if (!pacman[i].get_animation_over())
+					{
+						allanimover = false;
+					}
+				}
+				if ((!allanimover && allPacmanDead) || game_won)
 				{
 					if (1 == game_won)
 					{

@@ -10,8 +10,9 @@
 GhostManager::GhostManager() :
 	current_wave(0),
 	wave_timer(LONG_SCATTER_DURATION),
-	ghosts({Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),
-	Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3)})
+	ghosts({Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1)})
+	/*ghosts({ Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),
+	Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3) })*/
 {
 
 }
