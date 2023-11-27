@@ -119,6 +119,16 @@ void Ghost::draw(bool i_flash, sf::RenderWindow& i_window)
 				//Orange color
 				body.setColor(sf::Color(255, 182, 85));
 			}
+			case 4:
+			{
+				//Orange color
+				body.setColor(sf::Color(255, 182, 85));
+			}
+			case 5:
+			{
+				//Orange color
+				body.setColor(sf::Color(255, 182, 85));
+			}
 		}
 
 		face.setTextureRect(sf::IntRect(CELL_SIZE * direction, CELL_SIZE, CELL_SIZE, CELL_SIZE));

@@ -6,7 +6,7 @@
 #include "Headers/Pacman.hpp"
 #include "Headers/ConvertSketch.hpp"
 
-std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& i_map_sketch, std::array<Position, 4>& i_ghost_positions, Pacman& i_pacman)
+std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& i_map_sketch, std::array<Position, ghostnum>& i_ghost_positions, Pacman& i_pacman)
 {
 	//Is it okay if I put {} here? I feel like I'm doing something illegal.
 	//But if I don't put it there, Visual Studio keeps saying "lOcAl vArIaBlE Is nOt iNiTiAlIzEd".
@@ -14,8 +14,10 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 
 	for (unsigned char a = 0; a < MAP_HEIGHT; a++)
 	{
+		int commanum = 0;
 		for (unsigned char b = 0; b < MAP_WIDTH; b++)
 		{
+			
 			//By default, every cell is empty.
 			output_map[b][a] = Cell::Empty;
 
@@ -24,19 +26,19 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 				//#wall #obstacle #youcantgothroughme
 				case '#':
 				{
-					output_map[b][a] = Cell::Wall;
+					output_map[b - commanum][a] = Cell::Wall;
 
 					break;
 				}
 				case '=':
 				{
-					output_map[b][a] = Cell::Door;
+					output_map[b - commanum][a] = Cell::Door;
 
 					break;
 				}
 				case '.':
 				{
-					output_map[b][a] = Cell::Pellet;
+					output_map[b - commanum][a] = Cell::Pellet;
 
 					break;
 				}
@@ -51,6 +53,7 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 				//Pink ghost
 				case '1':
 				{
+						//if there's no comma
 					i_ghost_positions[1].x = CELL_SIZE * b;
 					i_ghost_positions[1].y = CELL_SIZE * a;
 
@@ -72,6 +75,40 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 
 					break;
 				}
+				case '4':
+				{
+					i_ghost_positions[4].x = CELL_SIZE * b;
+					i_ghost_positions[4].y = CELL_SIZE * a;
+
+					break;
+				}
+				case '5':
+				{
+					i_ghost_positions[5].x = CELL_SIZE * b;
+					i_ghost_positions[5].y = CELL_SIZE * a;
+
+					break;
+				}
+				case '6':
+				{
+					i_ghost_positions[6].x = CELL_SIZE * b;
+					i_ghost_positions[6].y = CELL_SIZE * a;
+
+					break;
+				}
+				case '7':
+				{
+					i_ghost_positions[7].x = CELL_SIZE * b;
+					i_ghost_positions[7].y = CELL_SIZE * a;
+
+					break;
+				}
+				case ',':
+				{
+					commanum ++;
+					break;
+				}
+
 				//Pacman!
 				case 'P':
 				{
