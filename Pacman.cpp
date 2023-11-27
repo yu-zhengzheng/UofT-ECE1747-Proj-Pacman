@@ -119,38 +119,36 @@ void Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 	walls[2] = map_collision(0, 0, position.x - PACMAN_SPEED, position.y, i_map);
 	walls[3] = map_collision(0, 0, position.x, PACMAN_SPEED + position.y, i_map);
 
-	if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		if (0 == walls[0]) //You can't turn in this direction if there's a wall there.
-		{
-			direction = 0;
-		}
-	}
-
-	if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		if (0 == walls[1])
-		{
-			direction = 1;
-		}
-	}
-
-	if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		if (0 == walls[2])
-		{
-			direction = 2;
-		}
-	}
-
-	if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		if (0 == walls[3])
-		{
-			direction = 3;
-		}
-	}
-
+    unsigned char rnum = rand() % 23;
+    //printf("rnum: %d\n",rnum);
+    if (rnum>3){//3/13 chance to not change direction
+        if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            if (0 == walls[0]){ //You can't turn in this direction if there's a wall there
+                direction = 0;
+            }
+        }
+        if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            if (0 == walls[1]) {
+                direction = 1;
+            }
+        }
+        if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            if (0 == walls[2]) {
+                direction = 2;
+            }
+        }
+        if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            if (0 == walls[3]) {
+                direction = 3;
+            }
+        }
+    }else{
+            if (0 == walls[rnum]){ //You can't turn in this direction if there's a wall there
+                direction = rnum;
+            }
+    }
+    
+    
 	if (0 == walls[direction])
 	{
 		switch (direction)

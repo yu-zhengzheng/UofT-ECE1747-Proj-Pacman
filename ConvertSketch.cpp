@@ -6,7 +6,7 @@
 #include "Headers/Pacman.hpp"
 #include "Headers/ConvertSketch.hpp"
 
-std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& i_map_sketch, std::array<Position, ghostnum>& i_ghost_positions, Pacman& i_pacman)
+std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& i_map_sketch, std::array<Position, ghostnum>& i_ghost_positions, std::array<Pacman, pacnum>& i_pacman)
 {
 	//Is it okay if I put {} here? I feel like I'm doing something illegal.
 	//But if I don't put it there, Visual Studio keeps saying "lOcAl vArIaBlE Is nOt iNiTiAlIzEd".
@@ -111,9 +111,11 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 
 				//Pacman!
 				case 'P':
-				{
-					i_pacman.set_position(CELL_SIZE * b, CELL_SIZE * a);
-
+				{   // TODO
+                    for (int i=0;i<pacnum;i++) {
+                        printf("pacman %d: b:%d a:%d\n",i,b,a);
+                        i_pacman[i].set_position(CELL_SIZE * b, CELL_SIZE * a);
+                    }
 					break;
 				}
 				//This looks like a surprised face.

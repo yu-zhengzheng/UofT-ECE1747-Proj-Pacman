@@ -2,6 +2,7 @@
 #include <chrono>
 #include <ctime>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 #include "Headers/Global.hpp"
 #include "Headers/DrawText.hpp"
@@ -86,7 +87,8 @@ int main()
 	window.setPosition(sf::Vector2i(100, 100));
 	GhostManager ghost_manager;
 
-	Pacman pacman;
+	//Pacman pacman;
+    std::array<Pacman, pacnum> pacman;
 
 	//Generating a random seed.
 	srand(static_cast<unsigned>(time(0)));
@@ -102,7 +104,7 @@ int main()
 	{
 		//Here we're calculating the lag.
 		unsigned delta_time = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previous_time).count();
-
+        //std::cout<<delta_time<<"\n";
 		lag += delta_time;
 
 		previous_time += std::chrono::microseconds(delta_time);
@@ -124,14 +126,15 @@ int main()
 					}
 				}
 			}
-
-			if (0 == game_won && 0 == pacman.get_dead())
+            //if game is not won and pacman 0 isn't dead
+			if (0 == game_won && 0 == pacman[0].get_dead())
 			{
 				game_won = 1;
-
-				pacman.update(level, map);
-
-				ghost_manager.update(level, map, pacman);
+                for (int i=0;i<pacnum;i++) {
+                    pacman[i].update(level, map);
+                    //printf("pac %d updated!\n",i);
+                }
+				ghost_manager.update(level, map, pacman[0]);
 
 				//We're checking every cell in the map.
 				for (const std::array<Cell, MAP_HEIGHT>& column : map)
@@ -154,14 +157,15 @@ int main()
 
 				if (1 == game_won)
 				{
-					pacman.set_animation_timer(0);
+					pacman[0].set_animation_timer(0);
 				}
 			}
+            //if game is won or lost, and enter is presses
 			else if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) //Restarting the game.
 			{
 				game_won = 0;
 
-				if (1 == pacman.get_dead())
+				if (1 == pacman[0].get_dead())
 				{
 					level = 0;
 				}
@@ -174,8 +178,9 @@ int main()
 				map = convert_sketch(map_sketch, ghost_positions, pacman);
 
 				ghost_manager.reset(level, ghost_positions);
-
-				pacman.reset();
+                for (int i=0;i<pacnum;i++) {
+				    pacman[i].reset();
+                }
 			}
 
 			//I don't think anything needs to be explained here.
@@ -183,18 +188,18 @@ int main()
 			{
 				window.clear();
 
-				if (0 == game_won && 0 == pacman.get_dead())
+				if (0 == game_won && 0 == pacman[0].get_dead())
 				{
 					draw_map(map, window);
 
-					ghost_manager.draw(GHOST_FLASH_START >= pacman.get_energizer_timer(), window);
+					ghost_manager.draw(GHOST_FLASH_START >= pacman[0].get_energizer_timer(), window);
 
 					draw_text(0, 0, CELL_SIZE * MAP_HEIGHT, "Level: " + std::to_string(1 + level), window);
 				}
-
-				pacman.draw(game_won, window);
-
-				if (1 == pacman.get_animation_over())
+                for (int i=0;i<pacnum;i++) {
+                    pacman[i].draw(game_won, window);
+                }
+				if (1 == pacman[0].get_animation_over())
 				{
 					if (1 == game_won)
 					{
