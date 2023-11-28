@@ -49,10 +49,21 @@ void GhostManager::threadSwitchMode(int i)
 
 void GhostManager::threadUpdate(int i, unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, std::array<Pacman, pacnum>& i_pacman)
 {
-	for (int j = 0; j < 8; j++) {
+	for (int j = 0; j < 8; j++){
 		int shortestid = 0;
-		int shortestdis = pow(ghosts[i * 8 + j].get_position().x - i_pacman[0].get_position().x, 2) + pow(ghosts[i * 8 + j].get_position().y - i_pacman[0].get_position().y, 2);
-		for(int n = 1; n<pacnum; n++)
+	    int shortestdis = 1000000;
+		for (int n = 0; n < pacnum; n++)
+		{
+			if (!i_pacman[n].get_dead())
+			{
+				int shortestid = n;
+				int shortestdis = pow(ghosts[i * 8 + j].get_position().x - i_pacman[n].get_position().x, 2) + pow(ghosts[i * 8 + j].get_position().y - i_pacman[n].get_position().y, 2);
+				break;
+			}
+			
+		}
+		
+		for(int n = 0; n<pacnum; n++)
 		{
 			int currentdis = pow(ghosts[i * 8 + j].get_position().x - i_pacman[n].get_position().x, 2) + pow(ghosts[i * 8 + j].get_position().y - i_pacman[n].get_position().y,2);
 			if(currentdis<shortestdis && !i_pacman[n].get_dead())
@@ -62,6 +73,7 @@ void GhostManager::threadUpdate(int i, unsigned char i_level, std::array<std::ar
 			}
 			
 		}
+		/*printf("\n chasing pac %d", shortestid);*/
 		ghosts[i * 8 + j].update(i_level, i_map, ghosts[i * 8], i_pacman[shortestid]);
 	}
 }
@@ -94,7 +106,7 @@ void GhostManager::update(unsigned char i_level, std::array<std::array<Cell, MAP
 	unsigned short maxtimer = 0;
 	for(Pacman&pacs: i_pacman)
 	{
-		if(pacs.get_energizer_timer()>maxtimer)
+		if(pacs.get_energizer_timer()>maxtimer && !pacs.get_dead())
 		{
 			maxtimer = pacs.get_energizer_timer();
 		}

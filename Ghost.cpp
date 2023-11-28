@@ -5,6 +5,9 @@
 #include "Headers/Global.hpp"
 #include "Headers/Pacman.hpp"
 #include "Headers/Ghost.hpp"
+
+#include <iostream>
+
 #include "Headers/MapCollision.hpp"
 
 Ghost::Ghost(unsigned char i_id) :
@@ -445,7 +448,7 @@ void Ghost::update_target(unsigned char i_pacman_direction, const Position& i_gh
 				case 0: //The red gohst will chase Pacman.
 				{
 					target = i_pacman_position;
-
+					/*std::cout << target.x<<" " << target.y<< std::endl;*/
 					break;
 				}
 				case 1: //The pink gohst will chase the 4th cell in front of Pacman.
