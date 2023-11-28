@@ -7,14 +7,15 @@
 #include "Headers/Pacman.hpp"
 #include "Headers/ConvertSketch.hpp"
 
-std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& i_map_sketch, std::array<Position, ghostnum>& i_ghost_positions, Pacman& i_pacman)
+std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::array<std::string, MAP_HEIGHT>& i_map_sketch, std::array<Position, ghostnum>& i_ghost_positions, std::array<Pacman, pacnum>& i_pacman)
 {
 	//Is it okay if I put {} here? I feel like I'm doing something illegal.
 	//But if I don't put it there, Visual Studio keeps saying "lOcAl vArIaBlE Is nOt iNiTiAlIzEd".
 	std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> output_map{};
-
+	int pacid = 0;
 	for (unsigned char a = 0; a < MAP_HEIGHT; a++)
 	{
+		
 		int commanum = 0;
 		int doublenum = 0;
 		bool indoublenum = false;
@@ -38,13 +39,23 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 					ghostid = std::stoi(realnum);
 					indoublenum = true;
 					doublenum++;
+
 				}
+				
 				else
 				{
 					ghostid = i_map_sketch[a][b] - '0';
 				}
-				i_ghost_positions[ghostid].x = CELL_SIZE * b;
-				i_ghost_positions[ghostid].y = CELL_SIZE * a;
+				if(ghostid < 10)
+				{
+					i_ghost_positions[ghostid].x = CELL_SIZE * (b - commanum - doublenum);
+				}
+				else
+				{
+					i_ghost_positions[ghostid].x = CELL_SIZE * (b - commanum - doublenum +1);
+				}
+				
+				i_ghost_positions[ghostid].y = CELL_SIZE * (a);
 			}
 			else
 			{
@@ -58,12 +69,12 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 
 					break;
 				}
-				case '=':
+				/*case '=':
 				{
 					output_map[b - commanum - doublenum][a] = Cell::Door;
 
 					break;
-				}
+				}*/
 				case '.':
 				{
 					output_map[b - commanum - doublenum][a] = Cell::Pellet;
@@ -140,8 +151,15 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 				//Pacman!
 				case 'P':
 				{
-					i_pacman.set_position(CELL_SIZE * b, CELL_SIZE * a);
-
+					/*for (; pacid < pacnum; pacid++) {*/
+					if(pacid < pacnum)
+					{
+						printf("pacman %d: b:%d a:%d\n", pacid, b, a);
+						i_pacman[pacid].set_position(CELL_SIZE* b, CELL_SIZE* a);
+						pacid++;
+					}
+						
+					/*}*/
 					break;
 				}
 				//This looks like a surprised face.

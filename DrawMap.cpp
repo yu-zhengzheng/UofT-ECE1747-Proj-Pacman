@@ -22,14 +22,14 @@ void draw_map(const std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, 
 			//We just crop out what we need from the texture.
 			switch (i_map[a][b])
 			{
-				case Cell::Door:
+			/*	case Cell::Door:
 				{
 					sprite.setTextureRect(sf::IntRect(2 * CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE));
 
 					i_window.draw(sprite);
 
 					break;
-				}
+				}*/
 				case Cell::Energizer:
 				{
 					sprite.setTextureRect(sf::IntRect(CELL_SIZE, CELL_SIZE, CELL_SIZE, CELL_SIZE));

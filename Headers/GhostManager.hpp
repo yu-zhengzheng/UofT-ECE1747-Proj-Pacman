@@ -1,5 +1,5 @@
 #pragma once
-
+#include <thread>
 class GhostManager
 {
 	//The ghosts will switch between the scatter mode and the chase mode before permanently chasing Pacman.
@@ -10,6 +10,7 @@ class GhostManager
 	unsigned short wave_timer;
 
 	std::array<Ghost, ghostnum> ghosts;
+	std::array<std::thread, ghostnum> threadArray;
 public:
 	GhostManager();
 
@@ -19,7 +20,7 @@ public:
 	void threadSetPosition(int i, const std::array<Position, ghostnum>& i_ghost_positions);
 	void threadReset(int i, const std::array<Position, ghostnum>& i_ghost_positions);
 	void threadSwitchMode(int i);
-	void threadUpdate(int i, unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, Pacman& i_pacman);
+	void threadUpdate(int i, unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, std::array<Pacman, pacnum>& i_pacman);
 
-	void update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, Pacman& i_pacman);
+	void update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, std::array<Pacman, pacnum>& i_pacman);
 };
