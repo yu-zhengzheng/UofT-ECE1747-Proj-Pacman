@@ -1,5 +1,5 @@
 #pragma once
-
+#include <thread>
 class GhostManager
 {
 	//The ghosts will switch between the scatter mode and the chase mode before permanently chasing Pacman.
@@ -10,6 +10,7 @@ class GhostManager
 	unsigned short wave_timer;
 
 	std::array<Ghost, ghostnum> ghosts;
+    std::array<std::thread, ghostnum> threadArray;
 public:
 	GhostManager();
 
