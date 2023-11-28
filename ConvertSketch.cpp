@@ -12,9 +12,10 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 	//Is it okay if I put {} here? I feel like I'm doing something illegal.
 	//But if I don't put it there, Visual Studio keeps saying "lOcAl vArIaBlE Is nOt iNiTiAlIzEd".
 	std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> output_map{};
-
+	int pacid = 0;
 	for (unsigned char a = 0; a < MAP_HEIGHT; a++)
 	{
+		
 		int commanum = 0;
 		int doublenum = 0;
 		bool indoublenum = false;
@@ -140,10 +141,15 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 				//Pacman!
 				case 'P':
 				{
-					for (int i = 0; i < pacnum; i++) {
-						printf("pacman %d: b:%d a:%d\n", i, b, a);
-						i_pacman[i].set_position(CELL_SIZE * b, CELL_SIZE * a);
+					/*for (; pacid < pacnum; pacid++) {*/
+					if(pacid < pacnum)
+					{
+						printf("pacman %d: b:%d a:%d\n", pacid, b, a);
+						i_pacman[pacid].set_position(CELL_SIZE* b, CELL_SIZE* a);
+						pacid++;
 					}
+						
+					/*}*/
 					break;
 				}
 				//This looks like a surprised face.

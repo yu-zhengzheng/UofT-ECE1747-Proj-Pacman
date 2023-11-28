@@ -1,6 +1,6 @@
 #pragma once
-constexpr unsigned char ghostnum = 10;//supposed to be 32
-constexpr unsigned char pacnum = 4;
+constexpr unsigned char ghostnum = 11;//supposed to be 32
+constexpr unsigned char pacnum = 8;
 //I won't explain this.
 constexpr unsigned char CELL_SIZE = 16;
 //This too.
@@ -26,7 +26,7 @@ constexpr unsigned char GHOST_FRIGHTENED_SPEED = 3;
 //I won't explain the rest. Bite me!
 constexpr unsigned char GHOST_SPEED = 1;
 constexpr unsigned char MAP_HEIGHT = 42;
-constexpr unsigned char MAP_WIDTH = 90;//ONLY the effective blocks
+constexpr unsigned char MAP_WIDTH = 93;//ONLY the effective blocks
 constexpr unsigned char PACMAN_ANIMATION_FRAMES = 6;
 constexpr unsigned char PACMAN_ANIMATION_SPEED = 4;
 constexpr unsigned char PACMAN_DEATH_FRAMES = 12;
