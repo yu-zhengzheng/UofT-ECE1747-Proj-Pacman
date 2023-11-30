@@ -15,20 +15,20 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 	int pacid = 0;
 	for (unsigned char a = 0; a < MAP_HEIGHT; a++)
 	{
-		
+
 		int commanum = 0;
 		int doublenum = 0;
 		bool indoublenum = false;
 		for (unsigned char b = 0; b < MAP_WIDTH; b++)
 		{
-			if(indoublenum)
+			if (indoublenum)
 			{
 				indoublenum = false;
 				continue;
 			}
 			//By default, every cell is empty.
 			output_map[b][a] = Cell::Empty;
-			
+
 			if (isdigit(i_map_sketch[a][b]))
 			{
 				int ghostid = 0;
@@ -41,20 +41,20 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 					doublenum++;
 
 				}
-				
+
 				else
 				{
 					ghostid = i_map_sketch[a][b] - '0';
 				}
-				if(ghostid < 10)
+				if (ghostid < 10)
 				{
 					i_ghost_positions[ghostid].x = CELL_SIZE * (b - commanum - doublenum);
 				}
 				else
 				{
-					i_ghost_positions[ghostid].x = CELL_SIZE * (b - commanum - doublenum +1);
+					i_ghost_positions[ghostid].x = CELL_SIZE * (b - commanum - doublenum + 1);
 				}
-				
+
 				i_ghost_positions[ghostid].y = CELL_SIZE * (a);
 			}
 			else
@@ -69,12 +69,12 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 
 					break;
 				}
-				/*case '=':
+				case '=':
 				{
-					output_map[b - commanum - doublenum][a] = Cell::Door;
+					output_map[b - commanum - doublenum][a] = Cell::only;
 
 					break;
-				}*/
+				}
 				case '.':
 				{
 					output_map[b - commanum - doublenum][a] = Cell::Pellet;
@@ -152,13 +152,13 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 				case 'P':
 				{
 					/*for (; pacid < pacnum; pacid++) {*/
-					if(pacid < pacnum)
+					if (pacid < pacnum)
 					{
 						printf("pacman %d: b:%d a:%d\n", pacid, b, a);
-						i_pacman[pacid].set_position(CELL_SIZE* b, CELL_SIZE* a);
+						i_pacman[pacid].set_position(CELL_SIZE * b, CELL_SIZE * a);
 						pacid++;
 					}
-						
+
 					/*}*/
 					break;
 				}
@@ -167,9 +167,9 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 				{
 					output_map[b][a] = Cell::Energizer;
 				}
-			}
+				}
 
-			
+
 			}
 		}
 	}

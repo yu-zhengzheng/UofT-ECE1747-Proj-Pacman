@@ -41,28 +41,28 @@ float Ghost::get_target_distance(unsigned char i_direction)
 	//We'll imaginarily move the gohst in a given direction and calculate the distance to the target.
 	switch (i_direction)
 	{
-		case 0:
-		{
-			x += GHOST_SPEED;
+	case 0:
+	{
+		x += GHOST_SPEED;
 
-			break;
-		}
-		case 1:
-		{
-			y -= GHOST_SPEED;
+		break;
+	}
+	case 1:
+	{
+		y -= GHOST_SPEED;
 
-			break;
-		}
-		case 2:
-		{
-			x -= GHOST_SPEED;
+		break;
+	}
+	case 2:
+	{
+		x -= GHOST_SPEED;
 
-			break;
-		}
-		case 3:
-		{
-			y += GHOST_SPEED;
-		}
+		break;
+	}
+	case 3:
+	{
+		y += GHOST_SPEED;
+	}
 	}
 
 	//I used the Pythagoras' theorem.
@@ -96,42 +96,42 @@ void Ghost::draw(bool i_flash, sf::RenderWindow& i_window)
 	{
 		switch (id)
 		{
-			case 0:
-			{
-				//Red color
-				body.setColor(sf::Color(255, 0, 0));
+		case 0:
+		{
+			//Red color
+			body.setColor(sf::Color(255, 0, 0));
 
-				break;
-			}
-			case 1:
-			{
-				//Pink color
-				body.setColor(sf::Color(255, 182, 255));
+			break;
+		}
+		case 1:
+		{
+			//Pink color
+			body.setColor(sf::Color(255, 182, 255));
 
-				break;
-			}
-			case 2:
-			{
-				//Cyan color (I still don't understand why they called it blue)
-				body.setColor(sf::Color(0, 255, 255));
+			break;
+		}
+		case 2:
+		{
+			//Cyan color (I still don't understand why they called it blue)
+			body.setColor(sf::Color(0, 255, 255));
 
-				break;
-			}
-			case 3:
-			{
-				//Orange color
-				body.setColor(sf::Color(255, 182, 85));
-			}
-			case 4:
-			{
-				//Orange color
-				body.setColor(sf::Color(255, 182, 85));
-			}
-			case 5:
-			{
-				//Orange color
-				body.setColor(sf::Color(255, 182, 85));
-			}
+			break;
+		}
+		case 3:
+		{
+			//Orange color
+			body.setColor(sf::Color(255, 182, 85));
+		}
+		case 4:
+		{
+			//Orange color
+			body.setColor(sf::Color(255, 182, 85));
+		}
+		case 5:
+		{
+			//Orange color
+			body.setColor(sf::Color(255, 182, 85));
+		}
 		}
 
 		face.setTextureRect(sf::IntRect(CELL_SIZE * direction, CELL_SIZE, CELL_SIZE, CELL_SIZE));
@@ -171,6 +171,11 @@ void Ghost::draw(bool i_flash, sf::RenderWindow& i_window)
 	animation_timer = (1 + animation_timer) % (GHOST_ANIMATION_FRAMES * GHOST_ANIMATION_SPEED);
 }
 
+bool Ghost::get_fritened()
+{
+	return frightened_mode;
+}
+
 void Ghost::reset(const Position& i_home, const Position& i_home_exit)
 {
 	movement_mode = 0;
@@ -191,7 +196,7 @@ void Ghost::reset(const Position& i_home, const Position& i_home_exit)
 
 void Ghost::set_position(short i_x, short i_y)
 {
-	position = {i_x, i_y};
+	position = { i_x, i_y };
 }
 
 void Ghost::switch_mode()
@@ -339,28 +344,28 @@ void Ghost::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT
 	{
 		switch (direction)
 		{
-			case 0:
-			{
-				position.x += speed;
+		case 0:
+		{
+			position.x += speed;
 
-				break;
-			}
-			case 1:
-			{
-				position.y -= speed;
+			break;
+		}
+		case 1:
+		{
+			position.y -= speed;
 
-				break;
-			}
-			case 2:
-			{
-				position.x -= speed;
+			break;
+		}
+		case 2:
+		{
+			position.x -= speed;
 
-				break;
-			}
-			case 3:
-			{
-				position.y += speed;
-			}
+			break;
+		}
+		case 3:
+		{
+			position.y += speed;
+		}
 		}
 
 		//Warping.
@@ -417,122 +422,122 @@ void Ghost::update_target(unsigned char i_pacman_direction, const Position& i_gh
 			//Each gohst goes to the corner it's assigned to.
 			switch (id)
 			{
-				case 0:
-				{
-					target = {CELL_SIZE * (MAP_WIDTH - 1), 0};
+			case 0:
+			{
+				target = { CELL_SIZE * (MAP_WIDTH - 1), 0 };
 
-					break;
-				}
-				case 1:
-				{
-					target = {0, 0};
+				break;
+			}
+			case 1:
+			{
+				target = { 0, 0 };
 
-					break;
-				}
-				case 2:
-				{
-					target = {CELL_SIZE * (MAP_WIDTH - 1), CELL_SIZE * (MAP_HEIGHT - 1)};
+				break;
+			}
+			case 2:
+			{
+				target = { CELL_SIZE * (MAP_WIDTH - 1), CELL_SIZE * (MAP_HEIGHT - 1) };
 
-					break;
-				}
-				case 3:
-				{
-					target = {0, CELL_SIZE * (MAP_HEIGHT - 1)};
-				}
+				break;
+			}
+			case 3:
+			{
+				target = { 0, CELL_SIZE * (MAP_HEIGHT - 1) };
+			}
 			}
 		}
 		else //The chase mode
 		{
 			switch (id)
 			{
-				case 0: //The red gohst will chase Pacman.
+			case 0: //The red gohst will chase Pacman.
+			{
+				target = i_pacman_position;
+				/*std::cout << target.x<<" " << target.y<< std::endl;*/
+				break;
+			}
+			case 1: //The pink gohst will chase the 4th cell in front of Pacman.
+			{
+				target = i_pacman_position;
+
+				switch (i_pacman_direction)
 				{
-					target = i_pacman_position;
-					/*std::cout << target.x<<" " << target.y<< std::endl;*/
-					break;
-				}
-				case 1: //The pink gohst will chase the 4th cell in front of Pacman.
+				case 0:
 				{
-					target = i_pacman_position;
-
-					switch (i_pacman_direction)
-					{
-						case 0:
-						{
-							target.x += CELL_SIZE * GHOST_1_CHASE;
-
-							break;
-						}
-						case 1:
-						{
-							target.y -= CELL_SIZE * GHOST_1_CHASE;
-
-							break;
-						}
-						case 2:
-						{
-							target.x -= CELL_SIZE * GHOST_1_CHASE;
-
-							break;
-						}
-						case 3:
-						{
-							target.y += CELL_SIZE * GHOST_1_CHASE;
-						}
-					}
+					target.x += CELL_SIZE * GHOST_1_CHASE;
 
 					break;
 				}
-				case 2: //The blue gohst.
+				case 1:
 				{
-					target = i_pacman_position;
-
-					//Getting the second cell in front of Pacman.
-					switch (i_pacman_direction)
-					{
-						case 0:
-						{
-							target.x += CELL_SIZE * GHOST_2_CHASE;
-
-							break;
-						}
-						case 1:
-						{
-							target.y -= CELL_SIZE * GHOST_2_CHASE;
-
-							break;
-						}
-						case 2:
-						{
-							target.x -= CELL_SIZE * GHOST_2_CHASE;
-
-							break;
-						}
-						case 3:
-						{
-							target.y += CELL_SIZE * GHOST_2_CHASE;
-						}
-					}
-
-					//We're sending a vector from the red gohst to the second cell in front of Pacman.
-					//Then we're doubling it.
-					target.x += target.x - i_ghost_0_position.x;
-					target.y += target.y - i_ghost_0_position.y;
+					target.y -= CELL_SIZE * GHOST_1_CHASE;
 
 					break;
 				}
-				case 3: //The orange gohst will chase Pacman until it gets close to him. Then it'll switch to the scatter mode.
+				case 2:
 				{
-					//Using the Pythagoras' theorem again.
-					if (CELL_SIZE * GHOST_3_CHASE <= sqrt(pow(position.x - i_pacman_position.x, 2) + pow(position.y - i_pacman_position.y, 2)))
-					{
-						target = i_pacman_position;
-					}
-					else
-					{
-						target = {0, CELL_SIZE * (MAP_HEIGHT - 1)};
-					}
+					target.x -= CELL_SIZE * GHOST_1_CHASE;
+
+					break;
 				}
+				case 3:
+				{
+					target.y += CELL_SIZE * GHOST_1_CHASE;
+				}
+				}
+
+				break;
+			}
+			case 2: //The blue gohst.
+			{
+				target = i_pacman_position;
+
+				//Getting the second cell in front of Pacman.
+				switch (i_pacman_direction)
+				{
+				case 0:
+				{
+					target.x += CELL_SIZE * GHOST_2_CHASE;
+
+					break;
+				}
+				case 1:
+				{
+					target.y -= CELL_SIZE * GHOST_2_CHASE;
+
+					break;
+				}
+				case 2:
+				{
+					target.x -= CELL_SIZE * GHOST_2_CHASE;
+
+					break;
+				}
+				case 3:
+				{
+					target.y += CELL_SIZE * GHOST_2_CHASE;
+				}
+				}
+
+				//We're sending a vector from the red gohst to the second cell in front of Pacman.
+				//Then we're doubling it.
+				target.x += target.x - i_ghost_0_position.x;
+				target.y += target.y - i_ghost_0_position.y;
+
+				break;
+			}
+			case 3: //The orange gohst will chase Pacman until it gets close to him. Then it'll switch to the scatter mode.
+			{
+				//Using the Pythagoras' theorem again.
+				if (CELL_SIZE * GHOST_3_CHASE <= sqrt(pow(position.x - i_pacman_position.x, 2) + pow(position.y - i_pacman_position.y, 2)))
+				{
+					target = i_pacman_position;
+				}
+				else
+				{
+					target = { 0, CELL_SIZE * (MAP_HEIGHT - 1) };
+				}
+			}
 			}
 		}
 	}

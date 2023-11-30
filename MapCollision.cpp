@@ -57,7 +57,7 @@ bool map_collision(bool i_collect_pellets, bool i_use_door, short i_x, short i_y
 				{
 					output = 1;
 				}
-				else if (0 == i_use_door && Cell::Door == i_map[x][y])
+				else if (0 == i_use_door && Cell::only == i_map[x][y])
 				{
 					output = 1;
 				}

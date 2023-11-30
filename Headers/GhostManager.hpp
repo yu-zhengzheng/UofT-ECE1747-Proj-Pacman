@@ -1,5 +1,8 @@
 #pragma once
 #include <thread>
+#include <array>
+#include "Global.hpp"
+#include "Ghost.hpp"
 class GhostManager
 {
 	//The ghosts will switch between the scatter mode and the chase mode before permanently chasing Pacman.
@@ -13,7 +16,8 @@ class GhostManager
 	std::array<std::thread, ghostnum> threadArray;
 public:
 	GhostManager();
-
+	std::vector<Position> getGhostPositions();
+	std::vector<bool> getGhostFritened();
 	void draw(bool i_flash, sf::RenderWindow& i_window);
 	void reset(unsigned char i_level, const std::array<Position, ghostnum>& i_ghost_positions);
 

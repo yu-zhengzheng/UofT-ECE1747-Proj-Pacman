@@ -1,10 +1,15 @@
 #include <array>
 #include <cmath>
+#include <vector>
+#include <unordered_map>
 #include <SFML/Graphics.hpp>
+#include <string>
 
 #include "Headers/Global.hpp"
 #include "Headers/Pacman.hpp"
 #include "Headers/MapCollision.hpp"
+#include "Headers/GhostManager.hpp"
+#include <iostream>
 
 Pacman::Pacman() :
 	animation_over(0),
@@ -16,6 +21,75 @@ Pacman::Pacman() :
 	//I just realized that I already explained everything in the Ghost class.
 	//And I don't like to repeat myself.
 }
+
+/*std::vector<Pacman::Point> Pacman::findPath(const Pacman::Point& start, const Pacman::Point& goal, const std::vector<std::vector<int>>& grid) {
+	auto heuristic = [](const Pacman::Point& a, const Pacman::Point& b) {
+		return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+		};
+
+	auto isValid = [&grid](const Pacman::Point& point) {
+		return point.x >= 0 && point.x < grid.size() && point.y >= 0 && point.y < grid[0].size() && grid[point.x][point.y] != 1;
+		};
+	std::priority_queue<Pacman::Node, std::vector<Pacman::Node>, Pacman::CompareNode> openSet;
+	std::unordered_map<Pacman::Point, Pacman::Point, Pacman::PointHash> cameFrom;
+	std::unordered_map<Pacman::Point, int, Pacman::PointHash> gScore;
+
+	openSet.push({ start, 0, heuristic(start, goal), Pacman::Point{-1, -1} });
+	gScore[start] = 0;
+
+	while (!openSet.empty()) {
+		Pacman::Point current = openSet.top().position;
+		if (current == goal) {
+			std::vector<Pacman::Point> path;
+			while (current != Pacman::Point{ -1, -1 }) {
+				path.push_back(current);
+				current = cameFrom[current];
+			}
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+
+		openSet.pop();
+
+		const std::vector<std::pair<int, int>> directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+		for (const auto& dir : directions) {
+			Pacman::Point neighbor{ current.x + dir.first, current.y + dir.second };
+			if (isValid(neighbor)) {
+				int tentative_gScore = gScore[current] + 1;
+				if (!gScore.count(neighbor) || tentative_gScore < gScore[neighbor]) {
+					cameFrom[neighbor] = current;
+					gScore[neighbor] = tentative_gScore;
+					int h = heuristic(neighbor, goal);
+					openSet.push({ neighbor, tentative_gScore, h, current });
+				}
+			}
+		}
+	}
+
+	return {};
+}
+
+Pacman::Point Pacman::findSafestPoint(const Pacman::Point& pacmanPosition, const std::vector<Position>& ghostPositions, const std::vector<std::vector<int>>& grid) {
+	int bestScore = std::numeric_limits<int>::min();
+	Pacman::Point targetPosition = pacmanPosition;
+	for (int x = 0; x < grid.size(); ++x) {
+		for (int y = 0; y < grid[x].size(); ++y) {
+			if (grid[x][y] == 0) {
+				Pacman::Point point = { y, x };
+				int score = 0;
+				for (const auto& ghostPos : ghostPositions) {
+					score += std::abs(point.y - ghostPos.y) + std::abs(point.x - ghostPos.x);
+				}
+				if (score > bestScore) {
+					bestScore = score;
+					targetPosition = point;
+				}
+			}
+		}
+	}
+	return targetPosition;
+}*/
+
 
 bool Pacman::get_animation_over()
 {
@@ -111,43 +185,112 @@ void Pacman::set_position(short i_x, short i_y)
 	position = {i_x, i_y};
 }
 
-void Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map)
+unsigned char Pacman::getOppositeDirection(unsigned char dir) const {
+	switch (dir) {
+	case 0: return 2; // 右的相反方向是左
+	case 1: return 3; // 上的相反方向是下
+	case 2: return 0; // 左的相反方向是右
+	case 3: return 1; // 下的相反方向是上
+	default: return 255; // 无效方向
+	}
+}
+
+
+unsigned char Pacman::getANYDirection(unsigned char dir) const {
+	std::vector<unsigned char> directions = { 0, 1, 2, 3 }; 
+	directions.erase(std::remove(directions.begin(), directions.end(), dir), directions.end());
+
+	int randomIndex = rand() % directions.size();
+	return directions[randomIndex];
+}
+
+
+bool Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH>& i_map, std::vector<Position> ghostPositions, bool allowTurnBack, std::vector<bool> ghostFriten)
 {
+	bool mustturn = false;
 	std::array<bool, 4> walls{};
 	walls[0] = map_collision(0, 0, PACMAN_SPEED + position.x, position.y, i_map);
 	walls[1] = map_collision(0, 0, position.x, position.y - PACMAN_SPEED, i_map);
 	walls[2] = map_collision(0, 0, position.x - PACMAN_SPEED, position.y, i_map);
 	walls[3] = map_collision(0, 0, position.x, PACMAN_SPEED + position.y, i_map);
 
-	unsigned char rnum = rand() % 23;
-	//printf("rnum: %d\n",rnum);
-	if (rnum > 3) {//3/13 chance to not change direction
-		if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-			if (0 == walls[0]) { //You can't turn in this direction if there's a wall there
-				direction = 0;
-			}
+	const std::vector<Position> directions = { {PACMAN_SPEED, 0}, {0, -PACMAN_SPEED}, {-PACMAN_SPEED, 0}, {0, PACMAN_SPEED} };
+	unsigned char bestDirection = rand()%4;
+	unsigned long mindistance = 9999999;
+
+	for (unsigned char i = 0; i < 4; ++i) {
+		if ( i == getOppositeDirection(lastDirection)) {
+			allowTurnBack = true;
+			continue; 
 		}
-		if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-			if (0 == walls[1]) {
-				direction = 1;
+		float newX = position.x + directions[i].x;
+		float newY = position.y + directions[i].y;
+		if (0 == walls[i]) {
+			std::vector<unsigned int> allDistances;
+			int id = 0;
+			for (const auto& ghost : ghostPositions) {
+				if (!ghostFriten[id])
+				{
+					if (std::abs(static_cast<int>(newX) - static_cast<int>(ghost.x)) + std::abs(static_cast<int>(newY) - static_cast<int>(ghost.y)) < 500)
+					{
+						unsigned int distanceFromOneOfGhost = (pow(std::abs(static_cast<int>(newX) - static_cast<int>(ghost.x)), 2) + pow(std::abs(static_cast<int>(newY) - static_cast<int>(ghost.y)), 2)) / 10;
+						if (distanceFromOneOfGhost > 0)
+						{
+							if (distanceFromOneOfGhost > 1000)
+							{
+								distanceFromOneOfGhost *= 4;
+							}
+							if(distanceFromOneOfGhost < 200)
+							{
+								
+							}
+							distanceFromOneOfGhost = 1000000 / distanceFromOneOfGhost;
+						}
+						else
+						{
+							distanceFromOneOfGhost = 1000000;
+						}
+						allDistances.push_back(distanceFromOneOfGhost);
+					}
+				}
+				
+				++id;
 			}
-		}
-		if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-			if (0 == walls[2]) {
-				direction = 2;
+			/*std::nth_element(allDistances.begin(), allDistances.begin() + 1, allDistances.end());*/
+			unsigned int nearestDistanceSum = std::accumulate(allDistances.begin(), allDistances.end(), 0u);
+
+			if (nearestDistanceSum < mindistance) {
+				mindistance = nearestDistanceSum;
+				bestDirection = i;
+
 			}
-		}
-		if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-			if (0 == walls[3]) {
-				direction = 3;
+			if(nearestDistanceSum > 1500)
+			{
+				mustturn = true;
 			}
+			std::cout << nearestDistanceSum<< std::endl;
 		}
 	}
-	else {
-		if (0 == walls[rnum]) { //You can't turn in this direction if there's a wall there
-			direction = rnum;
+	
+	
+	//std::cout << ghostPositions[0].x << ghostPositions[0].x << std::endl;
+	if(!mustturn)
+	{
+		if (bestDirection == getOppositeDirection(lastDirection)) {
+			allowTurnBack = false; // 禁止回头
+			bestDirection = lastDirection;
+		}
+		else {
+			allowTurnBack = true; // 允许回头
+			lastDirection = bestDirection; // 更新最后方向
 		}
 	}
+	else
+	{
+		direction = bestDirection;
+	}
+	//std::cout << std::to_string(direction) << std::endl;
+	
 
 	if (0 == walls[direction])
 	{
@@ -175,6 +318,7 @@ void Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 			{
 				position.y += PACMAN_SPEED;
 			}
+			
 		}
 	}
 
@@ -196,6 +340,7 @@ void Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 	{
 		energizer_timer = std::max(0, energizer_timer - 1);
 	}
+	return allowTurnBack;
 }
 
 Position Pacman::get_position()
