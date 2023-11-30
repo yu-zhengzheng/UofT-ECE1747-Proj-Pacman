@@ -19,7 +19,7 @@ constexpr unsigned char GHOST_ANIMATION_FRAMES = 6;
 //What do you think?
 constexpr unsigned char GHOST_ANIMATION_SPEED = 4;
 //The speed of the ghost after the Pacman touches it while being energized.
-constexpr unsigned char GHOST_ESCAPE_SPEED = 16;
+constexpr unsigned char GHOST_ESCAPE_SPEED = 8;
 //Since the normal speed of the ghost is 1, and I didn't like the idea of using floating numbers, I decided to move the ghost after this number of frames.
 //So the higher the value, the slower the ghost.
 constexpr unsigned char GHOST_FRIGHTENED_SPEED = 3;
@@ -36,7 +36,7 @@ constexpr unsigned char SCREEN_RESIZE = 2;
 //This is in frames. So don't be surprised if the numbers are too big.
 constexpr unsigned short CHASE_DURATION = 1024;
 constexpr unsigned short ENERGIZER_DURATION = 512;
-constexpr unsigned short FRAME_DURATION = 12000;
+constexpr unsigned short FRAME_DURATION = 7000;
 constexpr unsigned short GHOST_FLASH_START = 64;
 constexpr unsigned short LONG_SCATTER_DURATION = 512;
 constexpr unsigned short SHORT_SCATTER_DURATION = 256;
