@@ -209,24 +209,24 @@ bool Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 {
 	bool mustturn = false;
 	std::array<bool, 4> walls{};
-	walls[0] = map_collision(0, 0, PACMAN_SPEED + position.x, position.y, i_map);
-	walls[1] = map_collision(0, 0, position.x, position.y - PACMAN_SPEED, i_map);
-	walls[2] = map_collision(0, 0, position.x - PACMAN_SPEED, position.y, i_map);
-	walls[3] = map_collision(0, 0, position.x, PACMAN_SPEED + position.y, i_map);
+	walls[0] = map_collision(0, 0, 1 + position.x, position.y, i_map);
+	walls[1] = map_collision(0, 0, position.x, position.y - 1, i_map);
+	walls[2] = map_collision(0, 0, position.x - 1, position.y, i_map);
+	walls[3] = map_collision(0, 0, position.x, 1 + position.y, i_map);
 
 	const std::vector<Position> directions = { {PACMAN_SPEED, 0}, {0, -PACMAN_SPEED}, {-PACMAN_SPEED, 0}, {0, PACMAN_SPEED} };
 	unsigned char bestDirection = rand()%4;
-	unsigned long mindistance = 9999999;
+	long mindistance = 99999999;
 
-	for (unsigned char i = 0; i < 4; ++i) {
-		if ( i == getOppositeDirection(lastDirection)) {
-			allowTurnBack = true;
+	for (int i = 0; i < 4; ++i) {
+		if ( !allowTurnBack && i == getOppositeDirection(lastDirection)) {
+			/*allowTurnBack = true;*/
 			continue; 
 		}
 		float newX = position.x + directions[i].x;
 		float newY = position.y + directions[i].y;
 		if (0 == walls[i]) {
-			std::vector<unsigned int> allDistances;
+			std::vector<int> allDistances;
 			int id = 0;
 			for (const auto& ghost : ghostPositions) {
 				if (!ghostFriten[id])
@@ -240,10 +240,7 @@ bool Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 							{
 								distanceFromOneOfGhost *= 4;
 							}
-							if(distanceFromOneOfGhost < 200)
-							{
-								
-							}
+
 							distanceFromOneOfGhost = 1000000 / distanceFromOneOfGhost;
 						}
 						else
@@ -253,42 +250,61 @@ bool Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 						allDistances.push_back(distanceFromOneOfGhost);
 					}
 				}
+				else
+				{
+					if (std::abs(static_cast<int>(newX) - static_cast<int>(ghost.x)) + std::abs(static_cast<int>(newY) - static_cast<int>(ghost.y)) < 500)
+					{
+						int distanceFromOneOfGhost = (pow(std::abs(static_cast<int>(newX) - static_cast<int>(ghost.x)), 2) + pow(std::abs(static_cast<int>(newY) - static_cast<int>(ghost.y)), 2)) / 10;
+						if (distanceFromOneOfGhost > 0)
+						{
+							if (distanceFromOneOfGhost > 500)
+							{
+								distanceFromOneOfGhost *= 3;
+								distanceFromOneOfGhost = 1000000 / distanceFromOneOfGhost;
+							}
+							else if (distanceFromOneOfGhost < 50)
+							{
+								distanceFromOneOfGhost = 4000000 / distanceFromOneOfGhost;
+							}
+							
+						}
+						else
+						{
+							distanceFromOneOfGhost = 10000000;
+						}
+						allDistances.push_back(distanceFromOneOfGhost*( - 1));
+					}
+				}
 				
 				++id;
 			}
 			/*std::nth_element(allDistances.begin(), allDistances.begin() + 1, allDistances.end());*/
-			unsigned int nearestDistanceSum = std::accumulate(allDistances.begin(), allDistances.end(), 0u);
+			int nearestDistanceSum = std::accumulate(allDistances.begin(), allDistances.end(), 0u);
 
 			if (nearestDistanceSum < mindistance) {
 				mindistance = nearestDistanceSum;
 				bestDirection = i;
-
+				std::cout << int(i) << std::endl;
 			}
-			if(nearestDistanceSum > 1500)
+			
+			if(nearestDistanceSum > 10000)
 			{
-				mustturn = true;
+				allowTurnBack = true;
 			}
-			std::cout << nearestDistanceSum<< std::endl;
+			
 		}
 	}
 	
 	
 	//std::cout << ghostPositions[0].x << ghostPositions[0].x << std::endl;
-	if(!mustturn)
-	{
-		if (bestDirection == getOppositeDirection(lastDirection)) {
-			allowTurnBack = false; // 禁止回头
-			bestDirection = lastDirection;
-		}
-		else {
-			allowTurnBack = true; // 允许回头
-			lastDirection = bestDirection; // 更新最后方向
-		}
-	}
-	else
-	{
+
 		direction = bestDirection;
-	}
+		if(lastDirection == direction)
+		{
+			allowTurnBack = false;
+		}
+		lastDirection = bestDirection;
+	
 	//std::cout << std::to_string(direction) << std::endl;
 	
 
