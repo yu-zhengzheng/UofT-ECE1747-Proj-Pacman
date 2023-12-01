@@ -17,7 +17,7 @@ class GhostManager
 public:
 	GhostManager();
 	std::vector<Position> getGhostPositions();
-	std::vector<bool> getGhostFritened();
+	std::vector<bool> getGhostFrightened();
 	void draw(bool i_flash, sf::RenderWindow& i_window);
 	void reset(unsigned char i_level, const std::array<Position, ghostnum>& i_ghost_positions);
 

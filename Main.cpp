@@ -3,6 +3,7 @@
 #include <ctime>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <thread>
 #include <mutex>
 #include "Headers/Global.hpp"
 #include "Headers/DrawText.hpp"
@@ -13,6 +14,12 @@
 #include "Headers/DrawMap.hpp"
 #include "Headers/MapCollision.hpp"
 std::mutex myMutex;
+
+void threadReset(int i, std::array<Pacman, pacnum>& pacman)
+{
+	pacman[i].reset();
+}
+
 int main()
 {
 	srand(static_cast<unsigned>(time(nullptr)));
@@ -86,11 +93,11 @@ sf::Event event;
 sf::RenderWindow window(sf::VideoMode(CELL_SIZE* MAP_WIDTH* SCREEN_RESIZE, (FONT_HEIGHT + CELL_SIZE * MAP_HEIGHT)* SCREEN_RESIZE), "Pac-Man", sf::Style::Close | sf::Style::Resize);
 //Resizing the window.
 window.setView(sf::View(sf::FloatRect(0, 0, CELL_SIZE* MAP_WIDTH, FONT_HEIGHT + CELL_SIZE * MAP_HEIGHT)));
-
+window.setPosition(sf::Vector2i(-220, 30));
 GhostManager ghost_manager;
 
-//Pacman pacman;
 std::array<Pacman, pacnum> pacman;
+std::array<std::thread, ghostnum> threadArray;
 
 //Generating a random seed.
 srand(static_cast<unsigned>(time(0)));
@@ -152,31 +159,16 @@ while (1 == window.isOpen())
 					for (int j = i; j < std::min(i + 4, int(pacnum)); ++j) {
 						if (pacman[j].get_dead() == 0) {
 							std::lock_guard<std::mutex> guard(myMutex);
-							canturnback[j] = pacman[j].update(level, map, ghost_manager.getGhostPositions(), canturnback[j], ghost_manager.getGhostFritened());
-							//printf("pac %d updated!\n", j);
-							
+							canturnback[j] = pacman[j].update(level, map, ghost_manager.getGhostPositions(), canturnback[j], ghost_manager.getGhostFrightened());							
 						}
 					}
 					});
 			}
 
-			//for (auto& thread : threads) {
-			//	thread.join();
-			//}
-
-			//for (int i = 0; i < pacnum; i++) {
-			//	if (pacman[i].get_dead() == 0)
-			//	{
-			//		canturnback[i] = pacman[i].update(level, map, ghost_manager.getGhostPositions(),canturnback[i]);
-			//		//printf("pac %d updated!\n",i);
-			//	}
-
-			//}
-			//for (int i = 0; i < pacnum; i++) {
+	
 				if (!allPacmanDead) {
 					ghost_manager.update(level, map, pacman);
 				}
-			//}
 
 
 			//We're checking every cell in the map.
@@ -200,12 +192,7 @@ while (1 == window.isOpen())
 
 			if (1 == game_won)
 			{
-				//for (int i = 0; i < pacnum; i++) {
-
 				pacman[last].set_animation_timer(0);
-
-				//}
-
 			}
 		}
 		//if game is won or lost, and enter is presses
@@ -227,7 +214,10 @@ while (1 == window.isOpen())
 
 			ghost_manager.reset(level, ghost_positions);
 			for (int i = 0; i < pacnum; i++) {
-				pacman[i].reset();
+				threadArray[i] = std::thread(threadReset, i, std::ref(pacman));
+			}
+			for (int i = 0; i < pacnum; i++) {
+				threadArray[i].join();
 			}
 		}
 

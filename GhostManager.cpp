@@ -10,7 +10,6 @@
 GhostManager::GhostManager() :
 	current_wave(0),
 	wave_timer(LONG_SCATTER_DURATION),
-	//ghosts({Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1)})
 	ghosts({ Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),
 			 Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3),Ghost(0), Ghost(1), Ghost(2), Ghost(3),Ghost(0), Ghost(1),Ghost(2),Ghost(3) })
 
@@ -25,12 +24,12 @@ std::vector<Position> GhostManager::getGhostPositions() {
 	return positions;
 }
 
-std::vector<bool> GhostManager::getGhostFritened() {
-	std::vector<bool> friten;
+std::vector<bool> GhostManager::getGhostFrightened() {
+	std::vector<bool> frighten;
 	for (Ghost& ghost : ghosts) {
-		friten.push_back(ghost.get_fritened());
+		frighten.push_back(ghost.get_fritened());
 	}
-	return friten;
+	return frighten;
 }
 
 void GhostManager::draw(bool i_flash, sf::RenderWindow& i_window)
@@ -89,7 +88,6 @@ void GhostManager::threadUpdate(int i, unsigned char i_level, std::array<std::ar
 			}
 
 		}
-		/*printf("\n chasing pac %d", shortestid);*/
 		ghosts[i * 8 + j].update(i_level, i_map, ghosts[i * 8], i_pacman[shortestid]);
 	}
 }

@@ -154,7 +154,7 @@ std::array<std::array<Cell, MAP_HEIGHT>, MAP_WIDTH> convert_sketch(const std::ar
 					/*for (; pacid < pacnum; pacid++) {*/
 					if (pacid < pacnum)
 					{
-						printf("pacman %d: b:%d a:%d\n", pacid, b, a);
+						//printf("pacman %d: b:%d a:%d\n", pacid, b, a);
 						i_pacman[pacid].set_position(CELL_SIZE * b, CELL_SIZE * a);
 						pacid++;
 					}

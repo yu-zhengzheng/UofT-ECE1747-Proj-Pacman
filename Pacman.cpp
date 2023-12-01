@@ -22,73 +22,6 @@ Pacman::Pacman() :
 	//And I don't like to repeat myself.
 }
 
-/*std::vector<Pacman::Point> Pacman::findPath(const Pacman::Point& start, const Pacman::Point& goal, const std::vector<std::vector<int>>& grid) {
-	auto heuristic = [](const Pacman::Point& a, const Pacman::Point& b) {
-		return std::abs(a.x - b.x) + std::abs(a.y - b.y);
-		};
-
-	auto isValid = [&grid](const Pacman::Point& point) {
-		return point.x >= 0 && point.x < grid.size() && point.y >= 0 && point.y < grid[0].size() && grid[point.x][point.y] != 1;
-		};
-	std::priority_queue<Pacman::Node, std::vector<Pacman::Node>, Pacman::CompareNode> openSet;
-	std::unordered_map<Pacman::Point, Pacman::Point, Pacman::PointHash> cameFrom;
-	std::unordered_map<Pacman::Point, int, Pacman::PointHash> gScore;
-
-	openSet.push({ start, 0, heuristic(start, goal), Pacman::Point{-1, -1} });
-	gScore[start] = 0;
-
-	while (!openSet.empty()) {
-		Pacman::Point current = openSet.top().position;
-		if (current == goal) {
-			std::vector<Pacman::Point> path;
-			while (current != Pacman::Point{ -1, -1 }) {
-				path.push_back(current);
-				current = cameFrom[current];
-			}
-			std::reverse(path.begin(), path.end());
-			return path;
-		}
-
-		openSet.pop();
-
-		const std::vector<std::pair<int, int>> directions = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
-		for (const auto& dir : directions) {
-			Pacman::Point neighbor{ current.x + dir.first, current.y + dir.second };
-			if (isValid(neighbor)) {
-				int tentative_gScore = gScore[current] + 1;
-				if (!gScore.count(neighbor) || tentative_gScore < gScore[neighbor]) {
-					cameFrom[neighbor] = current;
-					gScore[neighbor] = tentative_gScore;
-					int h = heuristic(neighbor, goal);
-					openSet.push({ neighbor, tentative_gScore, h, current });
-				}
-			}
-		}
-	}
-
-	return {};
-}
-
-Pacman::Point Pacman::findSafestPoint(const Pacman::Point& pacmanPosition, const std::vector<Position>& ghostPositions, const std::vector<std::vector<int>>& grid) {
-	int bestScore = std::numeric_limits<int>::min();
-	Pacman::Point targetPosition = pacmanPosition;
-	for (int x = 0; x < grid.size(); ++x) {
-		for (int y = 0; y < grid[x].size(); ++y) {
-			if (grid[x][y] == 0) {
-				Pacman::Point point = { y, x };
-				int score = 0;
-				for (const auto& ghostPos : ghostPositions) {
-					score += std::abs(point.y - ghostPos.y) + std::abs(point.x - ghostPos.x);
-				}
-				if (score > bestScore) {
-					bestScore = score;
-					targetPosition = point;
-				}
-			}
-		}
-	}
-	return targetPosition;
-}*/
 
 
 bool Pacman::get_animation_over()
@@ -220,7 +153,6 @@ bool Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 
 	for (int i = 0; i < 4; ++i) {
 		if ( !allowTurnBack && i == getOppositeDirection(lastDirection)) {
-			/*allowTurnBack = true;*/
 			continue; 
 		}
 		float newX = position.x + directions[i].x;
@@ -284,14 +216,14 @@ bool Pacman::update(unsigned char i_level, std::array<std::array<Cell, MAP_HEIGH
 			if (nearestDistanceSum < mindistance) {
 				mindistance = nearestDistanceSum;
 				bestDirection = i;
-				std::cout << int(i) << std::endl;
+				/*std::cout << int(i) << std::endl;*/
 			}
 			
-			if(nearestDistanceSum > 10000)
+			if(nearestDistanceSum > 6000)
 			{
 				allowTurnBack = true;
 			}
-			
+			//std::cout << int(mindistance) << std::endl;
 		}
 	}
 	
